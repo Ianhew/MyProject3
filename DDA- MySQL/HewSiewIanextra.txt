@@ -1,0 +1,24 @@
+SET linesize 120
+SET pagesize 60
+
+TTITLE CENTER 'Driver Schedule Analysis  ' _DATE -
+RIGHT 'Page No: ' FORMAT 999 SQL.PNO SKIP 2
+
+COL PassengerID FORMAT A10 HEADING "Passenger ID "
+COL State FORMAT A20 HEADING "State "
+COL Status FORMAT A10 HEADING "Status "
+COL TotalBookings FORMAT 99 HEADING "Total Bookings "
+
+CREATE VIEW Passenger_HistoryBooked AS
+SELECT 
+    P.PassengerID,
+    P.State,
+    TB.Status,
+    COUNT(TB.Ticket_ID) AS TotalBookings
+FROM 
+    Passenger P
+JOIN 
+    TICKETBOOKING TB ON P.PassengerID = TB.PassengerID
+    AND TB.Status = 'Used'
+GROUP BY 
+    P.PassengerID, P.State, TB.Status;

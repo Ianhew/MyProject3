@@ -1,0 +1,29 @@
+-- Purpose 2: Driver frequency analysis
+-- This query will provide the number of shifts per driver.
+
+SET linesize 120
+SET pagesize 35
+
+COL DriverID FORMAT A10 HEADING "Driver ID"
+COL FirstName FORMAT A10 HEADING "First Name"
+COL LastName FORMAT A10 HEADING "Last Name"
+COL NumberOfShifts FORMAT 9999999 HEADING "Number of Shifts"
+
+TTITLE CENTER 'Driver Schedule Analysis  ' _DATE -
+RIGHT 'Page No: ' FORMAT 999 SQL.PNO SKIP 2
+
+ACCEPT v_DriverID CHAR PROMPT 'Enter the Driver ID: '
+
+BREAK ON DriverID SKIP 1
+
+SELECT d.DriverID, d.FirstName, d.LastName, COUNT(s.schedule_id) AS NumberOfShifts
+FROM DRIVER d
+JOIN BUS b ON d.BusID = b.BusID
+JOIN schedule s ON b.BusID = s.BusID
+WHERE d.DriverID = '&v_DriverID'
+GROUP BY d.DriverID, d.FirstName, d.LastName
+ORDER BY NumberOfShifts DESC;
+
+CLEAR COLUMNS
+CLEAR BREAKS
+TTITLE OFF

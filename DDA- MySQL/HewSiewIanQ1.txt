@@ -1,0 +1,29 @@
+-- This query will provide the history of ticket bookings for each passenger.
+
+SET linesize 120
+SET pagesize 35
+
+COL PassengerID FORMAT A10 HEADING "Passenger ID"
+COL FirstName FORMAT A20 HEADING "First Name"
+COL Date_booked FORMAT A11 HEADING "Date Booked"
+COL TotalQuantity FORMAT 9999 HEADING "Total Quantity"
+
+TTITLE CENTER 'Passenger Booking History  ' _DATE -
+RIGHT 'Page No: ' FORMAT 999 SQL.PNO SKIP 2
+
+ACCEPT v_startDate DATE FORMAT 'dd/mm/yyyy' PROMPT ' Enter the start date: '
+ACCEPT v_endDate DATE FORMAT 'dd/mm/yyyy' PROMPT ' Enter the end date : '
+
+BREAK ON PassengerID SKIP 1 ON FirstName SKIP 1
+
+SELECT P.PassengerID, P.FirstName, TB.Date_booked, SUM(BS.Quantity) AS TotalQuantity
+FROM Passenger P
+JOIN TICKETBOOKING TB ON P.PassengerID = TB.PassengerID
+JOIN BOOKED_SEATS BS ON TB.Ticket_ID = BS.Ticket_ID
+WHERE TB.Date_booked BETWEEN TO_DATE('&v_startDate', 'dd/mm/yyyy') AND TO_DATE('&v_endDate', 'dd/mm/yyyy')
+GROUP BY P.PassengerID, P.FirstName, TB.Date_booked
+ORDER BY P.PassengerID, TB.Date_booked;
+
+CLEAR COLUMNS
+CLEAR BREAKS
+TTITLE OFF

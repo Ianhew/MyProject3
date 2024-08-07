@@ -1,0 +1,127 @@
+create table PASSENGER (
+   PassengerID 	varchar(4) not null,
+   FirstName	varchar(25) not null,
+   LastName 	varchar(30) not null,
+   PhoneNumber 	varchar(20) not null,
+   State	 	varchar(50) not null,
+primary key(PassengerID)
+);
+
+create table BUS(
+   BusID        varchar(5)  not null,
+   BusNumber    varchar(7),
+   SeatNumber   number(2),
+   Capacity     number(2),
+   Model        varchar(10),
+   Condition    varchar(10),
+primary key(BusID)
+);
+
+
+create table DRIVER(
+   DriverID        varchar(5) not null,
+   FirstName       varchar(10),
+   LastName        varchar(10),
+   LicenseNumber   varchar(10),
+   ContactNumber   varchar(15),
+   BusID           varchar(5) not null,
+primary key(DriverID),
+foreign key(BusID) references Bus(BusID)
+);
+
+
+create table TOWN (
+   Postcode           varchar(6) not null,
+   TownName           varchar(20) not null,
+   PassengerNumber    number(3),
+primary key(Postcode)
+);
+
+
+CREATE TABLE seat (
+   SeatID         VARCHAR(10) NOT NULL,
+   SeatNumber     VARCHAR(10),
+   Status         VARCHAR(15),
+   PRIMARY KEY (SeatID)
+);
+
+create table TICKETBOOKING(
+   Ticket_ID       varchar(5) not null,
+   Date_booked     date,
+   Status          varchar(15),
+   Price           number(4,2),
+   Journey_Detail  varchar(20),
+   SeatID          VARCHAR(10) not null,
+   PassengerID     varchar(4) not null,
+primary key(Ticket_ID),
+foreign key(PassengerID) references PASSENGER(PassengerID),
+foreign key(SeatID) references seat(SeatID)
+);
+
+
+create table bus_stop (
+   stop_id         	 varchar(6)   not null,
+   stop_Name 	       varchar(60)  not null,
+   facilities_available  varchar(15)  not null,
+   BusID                 varchar(5)  not null, 
+   postcode		       number(6) not null,
+primary key(stop_id),
+foreign key (BusID) references bus(BusID),
+foreign key (postcode) references town(postcode)
+);
+
+
+create table schedule (
+   schedule_id     varchar(5)   not null,
+   schedule_date   date,
+   departure_time  varchar(5)  not null,
+   arrive_time     varchar(5)  not null,
+   postcode        varchar(6)  not null,
+   BusID           varchar(5)  not null,
+   SeatID          varchar(10)  not null,
+primary key(schedule_id),
+foreign key(BusID) references bus(BusID),
+foreign key(SeatID) references seat(SeatID)
+);
+
+
+CREATE TABLE discount(
+   DiscountID           varchar(10) not null,
+   DiscountPercentage   varchar(3),
+   ValidFrom            date,
+   ValidUntil           date,
+   Ticket_ID            varchar(5) not null,
+primary key(DiscountID),
+foreign key(Ticket_ID) references ticketbooking(Ticket_ID)
+);
+
+
+CREATE TABLE cancellation(
+   CancellationID     varchar(10) not null,
+   Reason             varchar(10),           
+   CancellationDate   date,
+   Ticket_ID          varchar(5)  not null,
+primary key(CancellationID),
+foreign key(Ticket_ID) references TicketBooking(Ticket_ID)
+);
+
+
+create table REFUND (
+   Refund_ID          varchar(5) not null,
+   Refund_Amount      number(7, 2),
+   Refund_date        date,
+   Reason             varchar(50),
+   CancellationID     varchar(10) not null,
+primary key(Refund_ID),
+foreign key(CancellationID) references CANCELLATION(CancellationID)
+);
+
+
+create table BOOKED_SEATS(
+   Ticket_ID     varchar(5)  not null,
+   SeatID        varchar(10) not null,
+   Quantity      number (2)  not null,
+primary key(Ticket_ID,SeatID),
+foreign key(Ticket_ID) references ticketbooking(Ticket_ID),
+foreign key(SeatID) references seat(SeatID)
+);

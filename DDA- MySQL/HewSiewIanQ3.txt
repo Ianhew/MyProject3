@@ -1,0 +1,28 @@
+-- Purpose 3: Popular bus model analysis
+-- This query will provide the most popular bus models based on the number of schedules.
+
+SET linesize 120
+SET pagesize 35
+
+ACCEPT v_startDate DATE FORMAT 'dd-mm-yyyy' PROMPT ' Enter the start date(dd-mm-yyyy) : '
+ACCEPT v_endDate DATE FORMAT 'dd-mm-yyyy' PROMPT ' Enter the end date(dd-mm-yyyy) : '
+
+COL BusID FORMAT A10 HEADING "Bus ID"
+COL Model FORMAT A10 HEADING "Bus Model"
+COL NumberOfSchedules FORMAT 9999999 HEADING "Number of Schedules"
+
+TTITLE CENTER 'Popular Bus Model Analysis  ' _DATE -
+RIGHT 'Page No: ' FORMAT 999 SQL.PNO SKIP 2
+
+BREAK ON Model SKIP 1
+
+SELECT b.BusID, b.Model, COUNT(s.schedule_id) AS NumberOfSchedules
+FROM schedule s
+JOIN BUS b ON s.BusID = b.BusID
+WHERE s.schedule_date BETWEEN TO_DATE('&v_startDate', 'dd-mm-yyyy') AND TO_DATE('&v_endDate', 'dd-mm-yyyy')
+GROUP BY b.BusID, b.Model
+ORDER BY NumberOfSchedules DESC;
+
+CLEAR COLUMNS
+CLEAR BREAKS
+TTITLE OFF
